@@ -5,7 +5,6 @@ import { APP_CONFIG } from './config';
 import {
   enumerateMonths,
   enumerateMonthDates,
-  buildMonthlyDate,
   formatDateInput,
   parseDateInput,
   formatDateLabel,
@@ -203,12 +202,12 @@ export default function App() {
                 />
               </label>
               <label className="field">
-                <span>Next debit date picker (sets day)</span>
+                <span>Select debit day (date picker)</span>
                 <input
                   type="date"
                   min={formatDateInput(today)}
                   max={formatDateInput(rangeEnd)}
-                  value={formatDateInput(buildMonthlyDate(signupDate, monthlyDebitDay))}
+                  value={formatDateInput(monthlyFirstDebitDate)}
                   onChange={(event) => {
                     const nextDate = parseDateInput(event.target.value);
                     setMonthlyDebitDay(nextDate.getDate());

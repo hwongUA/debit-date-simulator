@@ -38,6 +38,7 @@ export function getNextMonthlyDebitDate(signupDate: Date, dayOfMonth: number): D
     return buildMonthlyDate(addMonths(signup, 1), dayOfMonth);
   }
 
+  // Legacy behavior (booIFD = false): allow same-month debit if the configured day is on/after sign-up.
   const currentMonthCandidate = buildMonthlyDate(signup, dayOfMonth);
   if (currentMonthCandidate.getTime() >= signup.getTime()) {
     return currentMonthCandidate;
