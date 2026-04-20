@@ -1,4 +1,4 @@
-import { addDays } from 'date-fns';
+import { addDays, isSameMonth } from 'date-fns';
 import { describe, expect, it } from 'vitest';
 import {
   generateDebitDates,
@@ -44,27 +44,34 @@ describe('generateDebitDates', () => {
     ]);
   });
 
-  it('falls back to the end of month when the chosen monthly day does not exist', () => {
-    const signup = new Date(2026, 0, 31);
-    const firstDebitDate = getNextMonthlyDebitDate(signup, 31);
-    const debits = generateDebitDates({
-      mode: 'monthly',
-      rangeStart: signup,
-      rangeEnd: new Date(2026, 3, 30),
-      dayOfMonth: 31,
-      firstDebitDate
-    });
-
-    expect(debits.map((event) => formatDateInput(event.date))).toEqual([
-      '2026-01-31',
-      '2026-02-28',
-      '2026-03-31',
-      '2026-04-30'
+  it('always sets the first monthly debit to the selected day in the next month', () => {
+    const signups = [new Date(2026, 3, 1), new Date(2026, 3, 14), new Date(2026, 3, 15), new Date(2026, 3, 30)];
+    expect(signups.map((signup) => formatDateInput(getNextMonthlyDebitDate(signup, 15)))).toEqual([
+      '2026-05-15',
+      '2026-05-15',
+      '2026-05-15',
+      '2026-05-15'
     ]);
   });
 
-  it('finds the next monthly debit date after the selected sign-up date', () => {
-    expect(formatDateInput(getNextMonthlyDebitDate(new Date(2026, 3, 20), 15))).toBe('2026-05-15');
-    expect(formatDateInput(getNextMonthlyDebitDate(new Date(2026, 3, 12), 15))).toBe('2026-04-15');
+  it('rolls to end-of-month when day-of-month does not exist', () => {
+    expect(formatDateInput(getNextMonthlyDebitDate(new Date(2025, 0, 10), 31))).toBe('2025-02-28');
+    expect(formatDateInput(getNextMonthlyDebitDate(new Date(2024, 0, 10), 31))).toBe('2024-02-29');
+    expect(formatDateInput(getNextMonthlyDebitDate(new Date(2026, 2, 10), 31))).toBe('2026-04-30');
+  });
+
+  it('never creates a monthly debit in the same calendar month as sign-up', () => {
+    const signup = new Date(2026, 3, 12);
+    const firstDebitDate = getNextMonthlyDebitDate(signup, 15);
+    const debits = generateDebitDates({
+      mode: 'monthly',
+      rangeStart: signup,
+      rangeEnd: new Date(2026, 5, 30),
+      dayOfMonth: 15,
+      firstDebitDate
+    });
+
+    expect(debits.some((event) => isSameMonth(event.date, signup))).toBe(false);
+    expect(formatDateInput(debits[0].date)).toBe('2026-05-15');
   });
 });

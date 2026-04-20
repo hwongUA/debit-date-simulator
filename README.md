@@ -14,9 +14,9 @@ Static React app for visualising debit schedules against fulfilment / dispatch t
 - Timezone is always the browser's local timezone. No UTC conversions are used.
 - Calendar range is today through today + 2 years, inclusive.
 - 4-weekly mode defaults the first debit to sign-up date + 28 days.
-- Monthly mode defaults to day 15 and calculates the next debit on or after the sign-up date.
+- Monthly mode defaults to day 15 and (IFD always true) sets the first debit to that day in the next calendar month, rolling to month-end when needed.
 - Welcome Pack dispatch is the next Tuesday after sign-up (if sign-up is on a dispatch Tuesday, that fulfilment is missed).
-- Monthly Pack #1 defaults to the first Tuesday of the month after the Welcome Pack month so the Welcome Pack is always first.
+- Monthly Pack #1..#11 dispatch on the first Tuesday of each month starting the month after the Welcome Pack month.
 
 ## Project structure
 

@@ -34,8 +34,11 @@ export function getDefaultFourWeeklyFirstDebitDate(
 
 export function getNextMonthlyDebitDate(signupDate: Date, dayOfMonth: number): Date {
   const signup = toLocalDate(signupDate);
-  const currentMonthCandidate = buildMonthlyDate(signup, dayOfMonth);
+  if (APP_CONFIG.monthlyIfdAlwaysTrue) {
+    return buildMonthlyDate(addMonths(signup, 1), dayOfMonth);
+  }
 
+  const currentMonthCandidate = buildMonthlyDate(signup, dayOfMonth);
   if (currentMonthCandidate.getTime() >= signup.getTime()) {
     return currentMonthCandidate;
   }
@@ -92,7 +95,7 @@ export function generateFulfilmentDates(
 
     return {
       date: dispatchDate,
-      label: `Monthly Pack #${index + 1} Dispatch`,
+      label: `Monthly Pack #${index + 1}`,
       kind: 'monthly-pack',
       packNumber: index + 1
     };
