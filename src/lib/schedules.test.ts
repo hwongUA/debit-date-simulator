@@ -17,13 +17,11 @@ describe('generateFulfilmentDates', () => {
     expect(schedule.monthlyPackDates).toHaveLength(11);
   });
 
-  it('can start monthly packs in the same month as the welcome pack', () => {
-    const schedule = generateFulfilmentDates(new Date(2026, 3, 20), {
-      monthlyPackStartMode: 'same-month'
-    });
+  it('always starts monthly packs in the month after the welcome pack', () => {
+    const schedule = generateFulfilmentDates(new Date(2026, 3, 20));
 
     expect(formatDateInput(schedule.welcomePackDate)).toBe('2026-04-21');
-    expect(formatDateInput(schedule.monthlyPackDates[0].date)).toBe('2026-04-07');
+    expect(formatDateInput(schedule.monthlyPackDates[0].date)).toBe('2026-05-05');
   });
 });
 

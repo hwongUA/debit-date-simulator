@@ -16,7 +16,7 @@ import {
   getDefaultFourWeeklyFirstDebitDate,
   getNextMonthlyDebitDate
 } from './lib/schedules';
-import type { DayEvents, DebitMode, MonthSummary, PackStartMode } from './types';
+import type { DayEvents, DebitMode, MonthSummary } from './types';
 
 const today = startOfDay(new Date());
 const rangeEnd = addYears(today, APP_CONFIG.rangeYears);
@@ -31,7 +31,6 @@ export default function App() {
   const [fourWeeklyFirstDebitDate, setFourWeeklyFirstDebitDate] = useState(
     getDefaultFourWeeklyFirstDebitDate(today)
   );
-  const [packStartMode, setPackStartMode] = useState<PackStartMode>(APP_CONFIG.defaultPackStartMode);
 
   useEffect(() => {
     setFourWeeklyFirstDebitDate(getDefaultFourWeeklyFirstDebitDate(signupDate));
@@ -64,10 +63,9 @@ export default function App() {
   const fulfilmentSchedule = useMemo(
     () =>
       generateFulfilmentDates(signupDate, {
-        monthlyPackCount: APP_CONFIG.fulfilmentMonthlyPackCount,
-        monthlyPackStartMode: packStartMode
+        monthlyPackCount: APP_CONFIG.fulfilmentMonthlyPackCount
       }),
-    [packStartMode, signupDate]
+    [signupDate]
   );
 
   const fulfilmentDates = useMemo(
@@ -211,16 +209,6 @@ export default function App() {
             <span>Show dispatch dates</span>
           </label>
 
-          <label className="field">
-            <span>Monthly pack start</span>
-            <select
-              value={packStartMode}
-              onChange={(event) => setPackStartMode(event.target.value as PackStartMode)}
-            >
-              <option value="next-month">Start month after welcome pack month</option>
-              <option value="same-month">Start same month as welcome pack month</option>
-            </select>
-          </label>
         </div>
       </header>
 

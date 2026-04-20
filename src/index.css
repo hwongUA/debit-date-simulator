@@ -160,7 +160,7 @@ button {
 }
 
 .calendar--double-debit {
-  background: #f0f0f0;
+  background: #fff6a8;
 }
 
 .calendar__month-header {
@@ -231,13 +231,25 @@ button {
 }
 
 .day-cell--has-debit .day-cell__number,
-.day-cell--signup .day-cell__number {
-  background: #000;
+.day-cell--signup .day-cell__number,
+.day-cell--has-dispatch .day-cell__number {
   color: #fff;
 }
 
-.day-cell--has-fulfilment .day-cell__number {
-  box-shadow: inset 0 0 0 2px #000;
+.day-cell--has-debit .day-cell__number {
+  background: #000;
+}
+
+.day-cell--signup .day-cell__number {
+  background: #2e9e3e;
+}
+
+.day-cell--has-dispatch .day-cell__number {
+  background: #c82424;
+}
+
+.day-cell--signup-and-dispatch .day-cell__number {
+  background: linear-gradient(135deg, #2e9e3e 0 50%, #c82424 50% 100%);
 }
 
 .day-cell--signup {
@@ -255,19 +267,32 @@ button {
   display: inline-block;
 }
 
-.marker--debit,
-.marker--signup {
+.marker--debit {
   width: 0.45rem;
   height: 0.45rem;
   border-radius: 999px;
   background: #000;
 }
 
-.marker--fulfilment {
-  width: 0.52rem;
-  height: 0.52rem;
-  border: 1.5px solid #000;
-  border-radius: 999px;
+.marker--dispatch,
+.marker--signup {
+  min-width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 0.2rem;
+  display: inline-grid;
+  place-items: center;
+  font-size: 0.62rem;
+  font-weight: 700;
+}
+
+.marker--dispatch {
+  background: #c82424;
+  color: #fff;
+}
+
+.marker--signup {
+  background: #2e9e3e;
+  color: #fff;
 }
 
 .day-cell:focus-visible,
