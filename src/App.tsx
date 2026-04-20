@@ -8,6 +8,7 @@ import {
   formatDateInput,
   parseDateInput,
   formatDateLabel,
+  formatMonthLabel,
   toDateKey
 } from './lib/dateUtils';
 import {
@@ -131,6 +132,13 @@ export default function App() {
     [monthSummaries, months]
   );
 
+  const selectedMonth = useMemo(() => startOfMonth(signupDate), [signupDate]);
+  const selectedMonthSummary = monthSummaries.get(selectedMonth.toISOString()) ?? {
+    debits: [],
+    fulfilments: [],
+    isDoubleDebitMonth: false
+  };
+
   return (
     <div className="app-shell">
       <header className="top-header card-shell">
@@ -181,7 +189,7 @@ export default function App() {
           ) : (
             <div className="field-grid">
               <label className="field">
-                <span>Debit day of month</span>
+                <span>Configured debit day of month</span>
                 <input
                   type="number"
                   min="1"
@@ -193,12 +201,28 @@ export default function App() {
                   }}
                 />
               </label>
+              <label className="field">
+                <span>Select debit day (date picker)</span>
+                <input
+                  type="date"
+                  min={formatDateInput(today)}
+                  max={formatDateInput(rangeEnd)}
+                  value={formatDateInput(monthlyFirstDebitDate)}
+                  onChange={(event) => {
+                    const nextDate = parseDateInput(event.target.value);
+                    setMonthlyDebitDay(nextDate.getDate());
+                  }}
+                />
+              </label>
               <div className="field field--readout">
-                <span>Next debit</span>
+                <span>First monthly debit</span>
                 <strong>{formatDateLabel(monthlyFirstDebitDate)}</strong>
               </div>
             </div>
           )}
+          {debitMode === 'monthly' ? (
+            <p className="field-helper">Monthly IFD: first debit is always next month.</p>
+          ) : null}
 
           <label className="switch-row">
             <input
@@ -222,6 +246,43 @@ export default function App() {
           eventsByDay={eventsByDay}
           onSelectDate={setSignupDate}
         />
+        <aside className="month-summary card-shell" aria-label="Month summary panel">
+          <h2>{formatMonthLabel(selectedMonth)} summary</h2>
+          <section>
+            <h3>Debit dates</h3>
+            {selectedMonthSummary.debits.length > 0 ? (
+              <ul>
+                {selectedMonthSummary.debits.map((event) => (
+                  <li key={event.date.toISOString()}>
+                    <span>{formatDateLabel(event.date)}</span>
+                    <span>{event.label}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No debit dates in this month.</p>
+            )}
+          </section>
+          <section>
+            <h3>Fulfilment dates</h3>
+            {showFulfilmentDates ? (
+              selectedMonthSummary.fulfilments.length > 0 ? (
+                <ul>
+                  {selectedMonthSummary.fulfilments.map((event) => (
+                    <li key={`${event.label}-${event.date.toISOString()}`}>
+                      <span>{formatDateLabel(event.date)}</span>
+                      <span>{event.label}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No fulfilment dates in this month.</p>
+              )
+            ) : (
+              <p>Fulfilment dates are hidden.</p>
+            )}
+          </section>
+        </aside>
       </main>
     </div>
   );

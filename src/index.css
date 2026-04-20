@@ -95,9 +95,9 @@ button {
 }
 
 .field-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
   align-items: end;
-  min-width: 20rem;
+  min-width: 24rem;
 }
 
 .field--readout {
@@ -146,7 +146,39 @@ button {
 }
 
 .workspace-layout {
-  display: block;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.field-helper {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.month-summary {
+  padding: 0.9rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.month-summary h2,
+.month-summary h3,
+.month-summary p {
+  margin: 0;
+}
+
+.month-summary ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1rem;
+}
+
+.month-summary li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 0.25rem;
+  font-size: 0.88rem;
 }
 
 .calendar-mosaic {
@@ -311,5 +343,17 @@ button {
 
   .controls-inline {
     align-items: stretch;
+  }
+}
+
+@media (min-width: 1200px) {
+  .workspace-layout {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    align-items: start;
+  }
+
+  .month-summary {
+    position: sticky;
+    top: 1rem;
   }
 }
