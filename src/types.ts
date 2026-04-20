@@ -21,9 +21,3 @@ export interface DayEvents {
   debits: DebitEvent[];
   fulfilments: FulfilmentEvent[];
 }
-
-export interface MonthSummary {
-  debits: DebitEvent[];
-  fulfilments: FulfilmentEvent[];
-  isDoubleDebitMonth: boolean;
-}

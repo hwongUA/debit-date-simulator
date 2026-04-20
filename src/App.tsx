@@ -8,7 +8,6 @@ import {
   formatDateInput,
   parseDateInput,
   formatDateLabel,
-  formatMonthLabel,
   toDateKey
 } from './lib/dateUtils';
 import {
@@ -17,7 +16,7 @@ import {
   getDefaultFourWeeklyFirstDebitDate,
   getNextMonthlyDebitDate
 } from './lib/schedules';
-import type { DayEvents, DebitMode, MonthSummary } from './types';
+import type { DayEvents, DebitMode } from './types';
 
 const today = startOfDay(new Date());
 const rangeEnd = addYears(today, APP_CONFIG.rangeYears);
@@ -105,39 +104,26 @@ export default function App() {
 
   const months = useMemo(() => enumerateMonths(rangeStartMonth, rangeEndMonth), []);
 
-  const monthSummaries = useMemo<Map<string, MonthSummary>>(() => {
-    const summaryMap = new Map<string, MonthSummary>();
+  const doubleDebitMonths = useMemo(() => {
+    const monthFlags = new Map<string, boolean>();
     for (const month of months) {
-      const key = month.toISOString();
-      const debits = debitDates.filter((event) => isSameMonth(event.date, month));
-      const fulfilments = showFulfilmentDates
-        ? fulfilmentDates.filter((event) => isSameMonth(event.date, month))
-        : [];
-      summaryMap.set(key, {
-        debits,
-        fulfilments,
-        isDoubleDebitMonth: debits.length >= 2
-      });
+      monthFlags.set(
+        month.toISOString(),
+        debitDates.filter((event) => isSameMonth(event.date, month)).length >= 2
+      );
     }
-    return summaryMap;
-  }, [debitDates, fulfilmentDates, months, showFulfilmentDates]);
+    return monthFlags;
+  }, [debitDates, months]);
 
   const monthCalendarData = useMemo(
     () =>
-      months.map((month) => ({
-        month,
-        days: enumerateMonthDates(month),
-        isDoubleDebitMonth: monthSummaries.get(month.toISOString())?.isDoubleDebitMonth ?? false
-      })),
-    [monthSummaries, months]
+        months.map((month) => ({
+          month,
+          days: enumerateMonthDates(month),
+          isDoubleDebitMonth: doubleDebitMonths.get(month.toISOString()) ?? false
+        })),
+    [doubleDebitMonths, months]
   );
-
-  const selectedMonth = useMemo(() => startOfMonth(signupDate), [signupDate]);
-  const selectedMonthSummary = monthSummaries.get(selectedMonth.toISOString()) ?? {
-    debits: [],
-    fulfilments: [],
-    isDoubleDebitMonth: false
-  };
 
   return (
     <div className="app-shell">
@@ -187,7 +173,7 @@ export default function App() {
               />
             </label>
           ) : (
-            <div className="field-grid">
+            <>
               <label className="field">
                 <span>Configured debit day of month</span>
                 <input
@@ -201,28 +187,12 @@ export default function App() {
                   }}
                 />
               </label>
-              <label className="field">
-                <span>Select debit day (date picker)</span>
-                <input
-                  type="date"
-                  min={formatDateInput(today)}
-                  max={formatDateInput(rangeEnd)}
-                  value={formatDateInput(monthlyFirstDebitDate)}
-                  onChange={(event) => {
-                    const nextDate = parseDateInput(event.target.value);
-                    setMonthlyDebitDay(nextDate.getDate());
-                  }}
-                />
-              </label>
               <div className="field field--readout">
                 <span>First monthly debit</span>
                 <strong>{formatDateLabel(monthlyFirstDebitDate)}</strong>
               </div>
-            </div>
+            </>
           )}
-          {debitMode === 'monthly' ? (
-            <p className="field-helper">Monthly IFD: first debit is always next month.</p>
-          ) : null}
 
           <label className="switch-row">
             <input
@@ -246,43 +216,6 @@ export default function App() {
           eventsByDay={eventsByDay}
           onSelectDate={setSignupDate}
         />
-        <aside className="month-summary card-shell" aria-label="Month summary panel">
-          <h2>{formatMonthLabel(selectedMonth)} summary</h2>
-          <section>
-            <h3>Debit dates</h3>
-            {selectedMonthSummary.debits.length > 0 ? (
-              <ul>
-                {selectedMonthSummary.debits.map((event) => (
-                  <li key={event.date.toISOString()}>
-                    <span>{formatDateLabel(event.date)}</span>
-                    <span>{event.label}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No debit dates in this month.</p>
-            )}
-          </section>
-          <section>
-            <h3>Fulfilment dates</h3>
-            {showFulfilmentDates ? (
-              selectedMonthSummary.fulfilments.length > 0 ? (
-                <ul>
-                  {selectedMonthSummary.fulfilments.map((event) => (
-                    <li key={`${event.label}-${event.date.toISOString()}`}>
-                      <span>{formatDateLabel(event.date)}</span>
-                      <span>{event.label}</span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No fulfilment dates in this month.</p>
-              )
-            ) : (
-              <p>Fulfilment dates are hidden.</p>
-            )}
-          </section>
-        </aside>
       </main>
     </div>
   );
