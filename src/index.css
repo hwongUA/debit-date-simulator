@@ -230,7 +230,6 @@ button {
   border-width: 2px;
 }
 
-.day-cell--has-debit .day-cell__number,
 .day-cell--signup .day-cell__number,
 .day-cell--has-dispatch .day-cell__number {
   color: #fff;
@@ -238,6 +237,7 @@ button {
 
 .day-cell--has-debit .day-cell__number {
   background: #000;
+  color: #fff;
 }
 
 .day-cell--signup .day-cell__number {
