@@ -9,10 +9,10 @@ import {
 import { formatDateInput } from './dateUtils';
 
 describe('generateFulfilmentDates', () => {
-  it('uses the sign-up date when sign-up already falls on a Tuesday', () => {
+  it('pushes welcome pack to the following Tuesday when sign-up falls on a Tuesday dispatch date', () => {
     const schedule = generateFulfilmentDates(new Date(2026, 3, 21));
 
-    expect(formatDateInput(schedule.welcomePackDate)).toBe('2026-04-21');
+    expect(formatDateInput(schedule.welcomePackDate)).toBe('2026-04-28');
     expect(formatDateInput(schedule.monthlyPackDates[0].date)).toBe('2026-05-05');
     expect(schedule.monthlyPackDates).toHaveLength(11);
   });

@@ -82,7 +82,8 @@ export function generateFulfilmentDates(
   config: FulfilmentConfig = {}
 ): FulfilmentSchedule {
   const safeSignupDate = startOfDay(signupDate);
-  const welcomePackDate = nextOrSameTuesday(safeSignupDate);
+  const firstEligibleDispatchDate = addDays(safeSignupDate, 1);
+  const welcomePackDate = nextOrSameTuesday(firstEligibleDispatchDate);
   const monthlyPackCount = config.monthlyPackCount ?? APP_CONFIG.fulfilmentMonthlyPackCount;
   const startMonth = startOfMonth(addMonths(welcomePackDate, 1));
 
