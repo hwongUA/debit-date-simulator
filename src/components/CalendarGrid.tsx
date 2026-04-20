@@ -50,7 +50,11 @@ export function CalendarGrid({
               const inMonth = isSameMonth(date, month);
               const inRange = date.getTime() >= rangeStart.getTime() && date.getTime() <= rangeEnd.getTime();
               const hasDebit = events.debits.length > 0;
-              const hasFulfilment = showFulfilmentDates && events.fulfilments.length > 0;
+              const hasDispatch = showFulfilmentDates && events.fulfilments.length > 0;
+              const hasWelcomeDispatch =
+                showFulfilmentDates && events.fulfilments.some((event) => event.kind === 'welcome');
+              const hasMonthlyPackDispatch =
+                showFulfilmentDates && events.fulfilments.some((event) => event.kind === 'monthly-pack');
               const isSignup = isSameDay(date, signupDate);
               const labels = [
                 ...events.debits.map((event) => event.label),
@@ -67,9 +71,10 @@ export function CalendarGrid({
                     inMonth ? '' : 'day-cell--outside',
                     inRange ? '' : 'day-cell--out-of-range',
                     hasDebit ? 'day-cell--has-debit' : '',
-                    hasFulfilment ? 'day-cell--has-fulfilment' : '',
+                    hasDispatch ? 'day-cell--has-dispatch' : '',
                     isSignup ? 'day-cell--signup' : '',
-                    hasDebit || hasFulfilment || isSignup ? 'day-cell--event' : ''
+                    isSignup && hasDispatch ? 'day-cell--signup-and-dispatch' : '',
+                    hasDebit || hasDispatch || isSignup ? 'day-cell--event' : ''
                   ]
                     .filter(Boolean)
                     .join(' ')}
@@ -81,8 +86,21 @@ export function CalendarGrid({
                   <span className="day-cell__number">{date.getDate()}</span>
                   <span className="day-cell__markers">
                     {hasDebit ? <span className="marker marker--debit" aria-hidden="true" /> : null}
-                    {hasFulfilment ? <span className="marker marker--fulfilment" aria-hidden="true" /> : null}
-                    {isSignup ? <span className="marker marker--signup" aria-hidden="true" /> : null}
+                    {hasWelcomeDispatch ? (
+                      <span className="marker marker--dispatch marker--welcome" aria-hidden="true">
+                        W
+                      </span>
+                    ) : null}
+                    {hasMonthlyPackDispatch ? (
+                      <span className="marker marker--dispatch marker--monthly-pack" aria-hidden="true">
+                        #
+                      </span>
+                    ) : null}
+                    {isSignup ? (
+                      <span className="marker marker--signup" aria-hidden="true">
+                        S
+                      </span>
+                    ) : null}
                   </span>
                 </button>
               );

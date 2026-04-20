@@ -1,5 +1,4 @@
 export type DebitMode = 'four-weekly' | 'monthly';
-export type PackStartMode = 'same-month' | 'next-month';
 
 export interface DebitEvent {
   date: Date;

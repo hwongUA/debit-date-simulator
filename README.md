@@ -16,7 +16,7 @@ Static React app for visualising debit schedules against fulfilment / dispatch t
 - 4-weekly mode defaults the first debit to sign-up date + 28 days.
 - Monthly mode defaults to day 15 and calculates the next debit on or after the sign-up date.
 - Welcome Pack dispatch is the next Tuesday on or after sign-up.
-- Monthly Pack #1 defaults to the first Tuesday of the month after the Welcome Pack month. A UI control can switch this to start in the same month.
+- Monthly Pack #1 defaults to the first Tuesday of the month after the Welcome Pack month so the Welcome Pack is always first.
 
 ## Project structure
 

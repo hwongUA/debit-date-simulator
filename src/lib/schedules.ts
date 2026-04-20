@@ -1,6 +1,6 @@
 import { addDays, addMonths, startOfDay, startOfMonth } from 'date-fns';
 import { APP_CONFIG } from '../config';
-import type { DebitEvent, DebitMode, FulfilmentEvent, FulfilmentSchedule, PackStartMode } from '../types';
+import type { DebitEvent, DebitMode, FulfilmentEvent, FulfilmentSchedule } from '../types';
 import { buildMonthlyDate, firstTuesdayOfMonth, isWithinRange, nextOrSameTuesday, toLocalDate } from './dateUtils';
 
 interface BaseDebitOptions {
@@ -23,7 +23,6 @@ export type DebitGenerationOptions = FourWeeklyDebitOptions | MonthlyDebitOption
 
 interface FulfilmentConfig {
   monthlyPackCount?: number;
-  monthlyPackStartMode?: PackStartMode;
 }
 
 export function getDefaultFourWeeklyFirstDebitDate(
@@ -85,11 +84,7 @@ export function generateFulfilmentDates(
   const safeSignupDate = startOfDay(signupDate);
   const welcomePackDate = nextOrSameTuesday(safeSignupDate);
   const monthlyPackCount = config.monthlyPackCount ?? APP_CONFIG.fulfilmentMonthlyPackCount;
-  const monthlyPackStartMode = config.monthlyPackStartMode ?? APP_CONFIG.defaultPackStartMode;
-  const startMonth =
-    monthlyPackStartMode === 'same-month'
-      ? startOfMonth(welcomePackDate)
-      : startOfMonth(addMonths(welcomePackDate, 1));
+  const startMonth = startOfMonth(addMonths(welcomePackDate, 1));
 
   const monthlyPackDates: FulfilmentEvent[] = Array.from({ length: monthlyPackCount }, (_, index) => {
     const dispatchDate = firstTuesdayOfMonth(addMonths(startMonth, index));
